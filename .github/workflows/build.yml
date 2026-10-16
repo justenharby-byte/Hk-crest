@@ -1,0 +1,26 @@
+name: build
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Unzip project
+        run: unzip -q AlphaOmegaCrest.zip
+      - name: Build
+        working-directory: AlphaOmegaCrest
+        run: dotnet build -c Release
+      - name: Collect output
+        run: |
+          mkdir -p out/AlphaOmegaCrest
+          cp AlphaOmegaCrest/bin/Release/netstandard2.1/AlphaOmegaCrest.dll out/AlphaOmegaCrest/
+          cp -r AlphaOmegaCrest/Languages out/AlphaOmegaCrest/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AlphaOmegaCrest
+          path: out
